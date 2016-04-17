@@ -38,5 +38,4 @@ class Bot(object):
                                                 no_winning_cards[type_])/1.5)
             total_hands += no_winning_cards[type_]
         print no_winning_cards
-        print total_hands
-        print can_win_cards
+        return total_hands
