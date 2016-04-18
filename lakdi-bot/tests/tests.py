@@ -16,10 +16,11 @@ def test_predict_hands():
             cards.add(card)
         return cards
 
-    cards = generate_cards()
+    #cards = generate_cards()
+    cards = ["s_2", "s_3", "s_A", "d_A", "d_K", "d_Q", "d_10", "h_9", "h_10",
+             "h_K", "h_J", "h_Q", "c_A"]
     print cards
-    for card in CARDS.TYPE:
-        print card, ">>>>>>"
-        predicted_hands = bot.predict_hands(cards, card)
-        print predicted_hands
+#    for card in CARDS.TYPE:
+#       print card, ">>>>>>"
+    predicted_hands = bot.predict_hands(cards, "h")
 test_predict_hands()
