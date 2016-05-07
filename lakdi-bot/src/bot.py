@@ -1,3 +1,4 @@
+import random
 from .constants import CARDS
 
 
@@ -105,3 +106,74 @@ class Bot(object):
 #            total_hands += no_winning_cards[type_]
 #        print no_winning_cards
 #        return total_hands
+
+    def play_chance(self, trump, my_cards, cards_played):
+        
+        def isolate_cards(all_cards):
+            cards = dict()
+            for type_ in CARDS.TYPE:
+                cards[type_] = list()
+
+            for card in all_cards:
+                card_type, card_value = card.split("_")
+                cards[card_type].append(card)
+            return cards
+
+
+        def find_smallest_card(cards, generic=False):
+            if not cards:
+                raise ValueError("Card list cannot be empty")
+            cards_to_search = cards
+            if generic:
+                type_cards = isolate_cards(cards)
+                least_length = 14
+                for type_ in type_cards:
+                    if len(type_cards[type_]) and len(type_cards[type_]) < least_length:
+                        least_length = len(type_cards[type_])
+                        cards_to_search = type_cards[type_]
+                    elif len(type_cards[type_]) and len(type_cards[type_]) == least_length:
+                        possible_card_1 = find_smallest_card(cards_to_search)
+                        possible_card_2 = find_smallest_card(type_cards[type_]) 
+                        possible_card_1_type, possible_card_1_value = possible_card_1.split("_")
+                        possible_card_2_type, possible_card_2_value = possible_card_2.split("_")
+                        if int(possible_card_1_value) > int(possible_card_2_value):
+                            cards_to_search = type_cards[type_]
+                        elif int(possible_card_1_value) == int(possible_card_2_value):
+                            if random.choice((True, False)):
+                                cards_to_search = type_cards[type_]
+ 
+            smallest_card_value = 13
+            search_card_type, value = cards_to_search[0].split("_")
+            for card in cards_to_search:
+                card_type, card_value = card.split("_")
+                card_value = int(card_value)
+                if card_type != search_card_type:
+                    raise ValueError("Cards does not contain similar suites"
+                                     "card")
+                if card_value < smallest_card_value:
+                    smallest_card_type = card_type
+                    smallest_card_value = card_value
+                    smallest_card = card
+                elif card_value == smallest_card_value:
+                    raise TypeError("Two similar cards")
+            
+            return smallest_card
+
+
+        chance = len(cards_played)+1
+        cards = isolate_cards(my_cards)
+        if chance != 1:
+            chance_card_type, value = cards_played[0].split("_")
+            if cards[chance_card_type]:
+                for card in cards[chance_card_type]:
+                    win_probability()
+            elif cards[trump]:
+                for card in cards[trump]:
+                    win_probability(trump=True)
+            else:
+                other_cards = []
+                for key, value in cards.iteritems():
+                    if key not in (chance_card_type, trump):
+                        other_cards += value
+                return find_smallest_card(other_cards, generic=True)
+
